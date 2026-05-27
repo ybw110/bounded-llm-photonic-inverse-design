@@ -1,0 +1,19 @@
+[project]
+name = "my-llm-framework"
+version = "0.1.0"
+description = "Hierarchical language-physics framework for OOD metasurface inverse design"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "pandas",
+  "scipy",
+  "matplotlib"
+]
+
+[project.optional-dependencies]
+train = [
+  "torch"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

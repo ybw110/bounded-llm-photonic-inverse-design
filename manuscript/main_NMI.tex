@@ -1,0 +1,432 @@
+﻿
+% \documentclass[final,3p,times]{elsarticle}
+
+%% \documentclass[preprint,review,12pt]{elsarticle}
+
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
+%% for a journal layout:
+\documentclass[final,1p,times]{elsarticle}
+% \documentclass[final,1p,times,twocolumn]{elsarticle}
+%% \documentclass[final,3p,times]{elsarticle}
+% \documentclass[final,3p,times,twocolumn]{elsarticle}
+%% \documentclass[final,5p,times]{elsarticle}
+%% \documentclass[final,5p,times,twocolumn]{elsarticle}
+
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{threeparttable}
+
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{array}
+\renewcommand{\arraystretch}{1.5}
+\usepackage{comment}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{lineno}
+\usepackage{algorithm} 
+\usepackage{algorithmic} 
+\usepackage{multirow} 
+\usepackage{lineno}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage{picinpar}
+\usepackage{amsfonts}
+\usepackage{stfloats}
+\usepackage{flushend}
+\usepackage{colortbl}
+\usepackage{soul}
+\usepackage{multirow}
+\usepackage{pifont}
+\usepackage{color}
+\usepackage{alltt}
+
+\usepackage{setspace}
+\usepackage{url}
+%\usepackage[hidelinks]{hyperref}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{appendix}
+\usepackage{bbm}
+%\usepackage{mathrsfs}
+\usepackage{pdfpages}
+\usepackage{pdflscape}
+%\usepackage{lscape}
+\usepackage{enumerate}
+\usepackage{siunitx}
+\usepackage{breakurl}
+\usepackage{epstopdf}
+\usepackage{pbox}
+\usepackage{color}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\linespread{1.6}
+\newcommand\figref[1]{Fig.~\ref{#1}}
+\newcommand\eqrefA[1]{Eq.~\ref{#1}}
+% 
+\journal{Nature Machine Intelligence}
+\biboptions{numbers,sort&compress} 
+\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
+
+\makeatletter
+\def\ps@pprintTitle{%
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \let\@oddfoot\@empty
+  \let\@evenfoot\@empty
+}
+\makeatother
+
+
+\begin{document}
+
+%\list of figures
+\captionsetup[figure]{labelfont={bf},labelformat={default},labelsep=period,name={Fig.}}	
+		
+\begin{frontmatter}
+
+\title{An Attribution-Aware Evaluation Framework for Bounded Language-Model Agents in Photonic Inverse Design}
+
+\author[add1]{Bowen Yu}
+\author[add1]{Zhonglei Shen\corref{cor1}}
+\ead{zlshen@xjtu.edu.cn}
+\author[add1]{Zhibin Zhao}
+\author[add1]{Liuyang Zhang\corref{cor2}}
+\ead{liuyangzhang@xjtu.edu.cn}
+\author[add1]{Ruqiang Yan}
+\author[add1]{Xuefeng Chen}
+
+\cortext[cor1]{Corresponding author}
+\cortext[cor2]{Corresponding author}
+
+\address[add1]{School of Mechanical Engineering, Xi'an Jiaotong University, Xi'an, Shaanxi, 710049, China.}
+
+\begin{abstract}
+Language-model agents are increasingly used to coordinate scientific design workflows, yet their actual contribution is difficult to attribute when retrieval engines, learned surrogates, optimizers and validators perform most candidate generation. We address this problem with an attribution-aware language--physics evaluation framework that treats bounded language-model agents as evidence allocators rather than geometry generators. Using metasurface inverse design under distribution shift as a physical testbed, the framework freezes candidate generation before planner evaluation and constrains each agent to select predefined actions from structured evidence, numeric-critic feedback and replay pools. A strong retrieval-seeded forward-surrogate optimization backbone first establishes how much inverse-design capability is already provided without language-model planning. Same-domain replay then shows little residual binary-success headroom, whereas few-shot Target-H topology-shift recovery creates a measurable evidence-allocation problem. In this setting, DeepSeek and GLM-5.1 reach 0.792 and 0.787 target-domain Success@50 while using fewer target samples than a fixed H-200 rule. However, preview-greedy and out-of-fold learned controls reach the same exposed-evidence ceiling, while preview-withheld learning falls back to the high-budget rule. Representative CST audits further test whether selected candidates remain physically exportable. These results show that bounded language-model agents can be evaluated through separable notions of candidate-generation capability, evidence sufficiency and planner decision headroom, rather than through end-to-end workflow performance alone.
+\end{abstract}
+
+\begin{keyword}
+language-model agents \sep evaluation framework \sep scientific machine learning \sep harness engineering \sep evidence allocation \sep out-of-distribution generalization \sep photonic inverse design \sep attribution
+\end{keyword}
+
+\end{frontmatter}
+
+Tool-using language-model agents, typically built on large language models (LLMs), are becoming a common interface for scientific computation and design. Transformer models, few-shot prompting, chain-of-thought reasoning and reasoning--acting paradigms allow a model to call tools, inspect intermediate outputs and adapt through structured instructions \cite{vaswani2017attention, brown2020language, wei2022chain, yao2023react}. In scientific workflows, this suggests an orchestration role: language models may coordinate retrieval systems, learned surrogates, optimizers, simulators and validators rather than replace domain solvers. Retrieval-augmented generation provides one route for grounding such decisions in external evidence \cite{lewis2020retrieval}. Tool-using and domain-adapted language models have already been explored in chemistry, materials and photonics, including chemistry agents, predictive chemistry, nanophotonic design assistants, chat-to-chip metasurface models, autonomous metamaterial agents, freeform metasurface agents, and differentiable-solver orchestration \cite{bran2024augmenting,jablonka2024leveraging,kim2025nanophotonic,zhang2025chattochip,lu2025agenticframework,lu2025learning,lupoiu2025multi,huang2025mcp}.
+
+In optical and photonic inverse design, language-model-based systems have been used as natural-language interfaces, design assistants, simulator orchestrators and wrappers around retrieval engines, differentiable solvers or electromagnetic simulation tools. These studies show that language models can organize complex design workflows, but they also make attribution difficult. A workflow may appear to benefit from language-model reasoning even when the decisive candidate was retrieved from a library, improved by a learned surrogate, selected by an exposed numerical preview, or checked by a downstream simulator. The relevant question is therefore not only whether a language-model-assisted workflow performs well, but whether the policy contribution of the language model can be isolated from candidate generation, evidence exposure and downstream validation.
+
+This boundary is especially important under photonic distribution shift. A spectrally close candidate may be topology-invalid; a strong retrieval pool may already contain near-successful geometries; and a deterministic preview-based rule may match the action-space ceiling when candidate-level diagnostics are exposed. Existing language-model-assisted photonic workflows rarely evaluate these possibilities through frozen replay pools, planner-visible/evaluation-only field maps, strong non-language controls, action-space oracle analysis and representative physical exportability audits. We therefore formulate the language model as a bounded evidence allocator rather than as an unconstrained metasurface generator.
+
+Photonic inverse design provides a demanding testbed for this question. Optical metasurfaces use subwavelength scatterers to control amplitude, phase, polarization, dispersion and spectral response, enabling compact flat optics, beam steering, holography, sensing, absorption and multifunctional devices \cite{yu2011light, kildishev2013planar, chen2016review, arbabi2015dielectric, hsiao2017fundamentals, genevet2017recent}. Their design is a one-to-many inverse problem: many geometries can produce similar spectra, while feasible solutions are constrained by topology, material system, operating band, fabrication rules and full-wave interactions. A spectrally close candidate can therefore be invalid for the intended target domain, making metasurface design a useful physical benchmark for agent evaluation under retrieval ambiguity and distribution shift.
+
+A broad set of inverse-design methods already exists for this domain, including adjoint and topology optimization \cite{lalau2013adjoint, piggott2015inverse, molesky2018inverse, mansouree2020multifunctional, christiansen2021inverse}, heuristic and population-based optimizers \cite{kennedy1995particle, hansen2006cma}, and deep-learning approaches based on forward surrogates, inverse mappings, tandem networks, generative models, neural adjoint models and freeform topology representations \cite{liu2018training, so2020deep, ma2025benchmarking, jiang2019global, an2019deep, park2022free}. Sequence models such as OptoGPT and recent physics-aware metasurface generators further improve candidate generation and extrapolative structure discovery \cite{ma2023optogpt,li2026currentdiffusion}. Our focus is therefore different from generator-centric inverse design. We do not introduce another geometry generator, nor do we claim that a language model replaces electromagnetic solvers or numerical optimizers. Instead, we audit the decision layer that selects among physically defined evidence after retrieval, surrogate evaluation and optimization have already produced candidate pools.
+
+Here we treat metasurface inverse design not primarily as a device-performance competition, but as a controlled setting for auditing bounded language-model agents in scientific inverse design. By an \emph{agentic scientific workflow}, we mean a tool-mediated workflow in which a language model selects actions from a predefined interface using structured observations; we do not mean an unbounded autonomous scientist. We ask whether such a policy can be evaluated as an evidence allocator after candidate generation has been made explicit. This requires train-only memory construction, strong non-language baselines, frozen replay pools, shared observation schemas, numerical critics, visibility maps, deterministic controls, action-space oracle analysis and representative exportability audits.
+
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=\linewidth]{figures/fig1_overview_harness.pdf}
+\caption{\textbf{Overview of the attribution-aware language--physics evaluation framework for auditing bounded agents in photonic inverse design.}
+\textbf{a}, Conventional inverse-design workflows typically follow a fixed pipeline from target spectrum to inverse model, design output, and physical result. Such workflows may provide limited out-of-distribution awareness and do not explicitly evaluate the role of language-model-based decision making.
+\textbf{b}, The framework is implemented as an agent-audit harness that separates candidate generation from decision making. A three-domain OOD benchmark is constructed from cylindrical source metasurfaces, H-shaped topology-shift targets, and material/frequency-shift cylindrical targets. A train-only memory bank stores spectra, geometry parameters, domain labels, and physics-summary descriptors. A strong non-language-model backbone retrieves top-$k$ candidates, evaluates them with a PNN forward surrogate, and refines them using PSO or CMA-ES. A physics-aware numeric critic converts spectral and domain-validity errors into structured diagnostic evidence. The language-model planner, instantiated with interchangeable backends such as DeepSeek and GLM-5.1, receives this structured observation and outputs constrained JSON-like actions, such as expanding retrieval seeds, running an optimizer, switching domain priors, or stopping with the best available candidate.
+\textbf{c}, Selected candidates are exported for representative CST exportability audits rather than for a full statistical physical benchmark. The framework evaluates a bounded language-model agent as an auditable evidence-allocation policy under distribution shift, rather than as an unconstrained geometry generator or a replacement for electromagnetic solvers.}
+\label{fig:overview_harness}
+\end{figure}
+
+As illustrated in Fig.~\ref{fig:overview_harness}, we instantiate this evaluation framework as a retrieval-augmented language--physics harness for metasurface inverse design under distribution shift. Candidate generation is handled by train-only retrieval, PNN forward surrogates, PSO/CMA-ES optimization and conservative acceptance. The language-model agent receives structured evidence and numeric-critic feedback, then selects predefined actions such as expanding retrieval seeds, invoking an optimizer, switching domain priors or stopping with the best available candidate. We use \emph{harness engineering} to denote the implemented control environment: evidence representations, action constraints, frozen replay pools, baselines, oracle analyses and validation loops that make an agent measurable rather than merely conversational.
+
+The resulting contribution is threefold. First, we formulate an attribution-aware evaluation framework for bounded language-model agents in physical inverse design. Second, we instantiate it as a three-domain frozen-pool benchmark that separates interpolation, topology shift and material/frequency shift while freezing candidate generation before planner evaluation. Third, we show that few-shot topology-shift recovery is where evidence allocation becomes measurable, and that exposed candidate-level previews can make deterministic or lightweight learned selectors reach the same constrained ceiling as language-model policies. The claim is narrow: bounded language-model agents can be audited as evidence allocators, not presented as autonomous metasurface designers or as uniquely superior to every deterministic selector.
+
+
+
+\section{Results}
+
+
+\subsection{Train-only retrieval and surrogate optimization establish the non-language backbone}
+
+We first constructed a train-only multi-domain memory bank to quantify the candidate prior available before any language-model planning. The benchmark contains three regimes: a cylindrical Source domain, an H-shaped Target-H domain representing topology shift, and a cylindrical Target-Self domain representing material/frequency shift. The memory bank was built exclusively from training splits, containing 45,928 Source samples, 17,360 Target-H samples and 2,568 Target-Self samples. Original source-index overlap between train and test is zero for all domains. Additional split, spectrum, descriptor, PCA and retrieval-ablation details are reported in Supplementary Note~1 and Supplementary Figs. S1--S3.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/phase2_retrieval_seeded_non_llm_engine.pdf}
+\caption{\textbf{Train-only retrieval and retrieval-seeded surrogate optimization establish a strong non-language backbone.}
+\textbf{a}, Raw-spectrum train-memory retrieval Success@K for Source, Target-H and Target-Self queries. Success@50 is interpreted as recoverable evidence in the train-memory candidate pool, not as autonomous design success. Source and Target-H show substantial top-1-to-top-50 gaps, whereas Target-Self is already saturated.
+\textbf{b}, Target-H best amplitude-MSE within the top-K retrieved seeds. Increasing K exposes lower-error candidates, indicating that Target-H is often selection-limited rather than memory-limited.
+\textbf{c}, Workflow of the non-language candidate-generation engine. Each target spectrum is matched to raw-spectrum retrieval seeds, evaluated by a PNN forward surrogate, refined by PSO or CMA-ES, and filtered by conservative no-success-regression acceptance.
+\textbf{d}, Final amplitude-MSE distributions on the Target-H topology-shift domain. Retrieval-seeded optimization reduces error relative to retrieval-only top-1, whereas random/LHS-seeded optimization and one-shot inverse prediction remain weaker.
+\textbf{e}, Conservative-acceptance diagnostics for the PSO path. The no-success-regression gate preserves already successful Target-Self retrieval candidates while retaining useful optimization gains on Source and Target-H.
+\textbf{f}, Offline heuristic-planner stopping statistics. Target-Self stops immediately after retrieval, whereas Source and Target-H require PSO/CMA-ES recovery for a subset of retrieval-failed queries. This strong handcrafted policy defines the non-language decision baseline for later planner replay.}
+\label{fig:non_llm_engine}
+\end{figure}
+
+Raw-spectrum train-memory retrieval provides a strong but imperfect candidate prior (Fig.~\ref{fig:non_llm_engine}a,b). Here Success@50 measures whether useful evidence is recoverable somewhere in the frozen candidate pool; it is not a top-1 deployment metric or a claim of autonomous design. Success@50 reaches 0.9942 on Source, 0.9766 on Target-H and 1.0000 on Target-Self, but Source and Target-H show substantial top-1-to-top-50 gaps: Success@1 is 0.7167 on Source and 0.7210 on Target-H. Thus, useful Target-H candidates often exist in memory, but the nearest spectral neighbour is not always the appropriate design. Target-Self is already saturated by nearest-neighbour retrieval. A split-similarity audit further shows that Target-Self test spectra have extremely close train-memory neighbours in amplitude space (median nearest-neighbour MSE $2.23\times10^{-13}$), so we use Target-Self as a calibration-like sanity control rather than as the primary OOD benchmark (Supplementary Table S3).
+
+We next established a strong non-language-model candidate-generation engine before evaluating any language-model planner (Fig.~\ref{fig:non_llm_engine}c). Each query was initialized from raw-spectrum retrieval seeds, evaluated by a PNN forward surrogate, refined by PSO or CMA-ES, and filtered by a conservative no-success-regression acceptance rule. This design separates numerical candidate generation from the later planner-level decision problem.
+
+Retrieval-seeded optimization substantially improves over top-1 retrieval (Fig.~\ref{fig:non_llm_engine}d). On Source, success increases from 0.7167 to 0.8121 with CMA-ES. On Target-H, the key topology-shift benchmark, success increases from 0.7210 to 0.8409. Random/LHS-seeded optimization and a one-shot inverse neural-network baseline remain much weaker, showing that the gain comes from memory-guided local refinement rather than from the optimizer alone (Supplementary Note~2).
+
+The conservative acceptance rule prevents local optimization from damaging already solved cases, preserving Target-Self success at 1.0000 while allowing Source and Target-H failures to be repaired (Fig.~\ref{fig:non_llm_engine}e). A deterministic offline heuristic planner that selects among retrieval, PSO and CMA-ES reaches 0.8196 on Source, 0.8594 on Target-H and 1.0000 on Target-Self (Fig.~\ref{fig:non_llm_engine}f). This handcrafted policy defines the strong non-language-model decision baseline for the planner replay experiments below.
+
+
+
+
+\subsection{Offline planner replay separates decision making from candidate generation}
+
+We next isolated the contribution of the planner itself. All retrieval, PSO, CMA-ES and expanded-seed results were frozen before policy evaluation. Rule, language-model and action-space oracle planners were evaluated only by how they selected among the same precomputed pools; selecting seed expansion therefore chooses an already frozen pool rather than giving the language model access to information unavailable to controls.
+
+
+Formally, each query \(q\) is associated with a frozen candidate universe \(\mathcal{C}_q=\{c_i\}\) generated before planner evaluation. A planner policy \(\pi\) receives a structured observation \(o_q\), whose fields are specified by the replay task, and selects an action \(a\in\mathcal{A}\) such as stopping, invoking a precomputed optimizer result, expanding a seed budget, or choosing a few-shot target-memory setting. The selected candidate is scored by an evaluation function \(E(c,q)\) for reporting. The action-space oracle \(\pi^*_{\mathcal{A}}\) is computed retrospectively over the same finite action menu and is used only to estimate the ceiling within that menu. In the few-shot OOD replay below, candidate-level previews are intentionally exposed and separately audited; aggregate policy outcomes, oracle labels, extended-memory references, and CST outputs remain evaluation-only. This formulation separates candidate-pool quality, evidence sufficiency, and planner decision quality.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/phase3b_planner_replay_result.pdf}
+\caption{\textbf{DeepSeek action usage, seed-budget replay, and oracle-bounded planner headroom.}
+\textbf{a}, DeepSeek action-usage heatmap across 100-query pilot and 500-query replay settings. The language-model planner uses retrieval stopping, optimizer calls and seed expansion, while saturated Target-Self queries stop after retrieval.
+\textbf{b}, Expanded-seed action counts. Seed expansion is selected on Source and Target-H queries, but not on Target-Self queries.
+\textbf{c}, Target-H seed-budget replay across pilot, 500-query and full-set evaluations. Expansion improves recovery under a weaker seed1 budget but saturates when the baseline already uses seed3.
+\textbf{d}, Oracle-bounded success headroom over the frozen action pool. The strong rule planner is close to the action-space success ceiling.
+\textbf{e}, Oracle-bounded final-MSE headroom. Remaining planner opportunity is more visible as spectral-quality improvement than as binary-success gain.
+\textbf{f}, Held-out MSE-aware selector. Once binary success is near saturation, residual planner value appears mainly as final spectral-quality refinement.}
+\label{fig:offline_planner_replay_results}
+\end{figure}
+
+The reusable audit protocol freezes candidate generation, declares visible and hidden fields, compares language-model policies with rule and learned controls, reports an action-space oracle, tests visibility by withholding previews, and reserves CST outputs for post hoc exportability audit. These checks make the language-model contribution bounded and falsifiable rather than assumed from end-to-end performance.
+
+The planner receives domain, retrieval, optimizer, budget, action-history and numeric-critic evidence, and returns one constrained action. Schema definitions are provided in Supplementary Note~3 and Supplementary Table S9. DeepSeek uses this action space interpretably (Fig.~\ref{fig:offline_planner_replay_results}a,b): it stops after retrieval on solved cases, invokes PSO/CMA-ES on retrieval failures, and selects seed expansion on Source and Target-H but not on saturated Target-Self queries.
+
+
+Seed-budget replay and oracle analysis then bound the available decision headroom (Fig.~\ref{fig:offline_planner_replay_results}c--e). Expanding from seed1 to seed3 improves Target-H success, but expansion largely saturates once the initial pool already uses three retrieval seeds. The strong rule planner is also close to the action-space oracle: the remaining binary-success gaps are only 0.0013 on Source and 0.0062 on Target-H, with Target-Self saturated. A held-out MSE-aware selector shows that residual planner opportunity appears mainly as spectral-quality refinement rather than binary-success improvement (Fig.~\ref{fig:offline_planner_replay_results}f). We therefore interpret offline replay as a boundary-setting experiment: it formalizes the planner as a bounded evidence allocator, but also shows that little binary-success headroom remains when the candidate pool is already strong.
+
+
+
+
+
+
+\subsection{Few-shot OOD recovery is where evidence allocation matters}
+
+The offline replay experiments above show that, after retrieval-seeded optimization and seed expansion are available, same-domain planner headroom becomes small. We therefore moved to a setting where the planner has a more consequential role: few-shot OOD recovery. Here the decision is no longer only which optimizer output to select, but whether source memory is sufficient, whether target-domain evidence is needed, which retrieval representation should be trusted, and how many target samples should be allocated.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/phase4_main_composite.pdf}
+\caption{\textbf{Language-model-guided few-shot OOD recovery through target-evidence allocation.}
+\textbf{a}, Schematic of the few-shot OOD recovery workflow. OOD queries from Target-H or Target-Self are evaluated against source-only memory and few-shot target memory, and structured evidence including spectral match, domain validity, and target-sample cost is provided to a rule, language-model, or oracle planner.
+\textbf{b}, Few-shot recovery on Target-H topology shift. Overall Success@50 can be nonzero even with source-only memory, but target-domain Success@50 remains zero without target-domain samples, showing that spectral similarity alone does not guarantee topology-valid recovery.
+\textbf{c}, Few-shot recovery on Target-Self material/frequency shift. Target-domain Success@50 rapidly saturates after adding a small number of target samples, indicating calibration-like OOD behavior.
+\textbf{d}, Extended Target-H coverage curve from zero to full target memory. Target-H recovery improves gradually with increasing target-domain memory, confirming that topology shift is coverage-limited.
+\textbf{e}, 500-query Target-H planner replay comparing source-only, fixed H-200 rule, DeepSeek, GLM-5.1, and action-space oracle policies. Bars show overall Success@50 and target-domain Success@50; the dotted line shows mean target samples used. Preview-greedy and learned non-language-model controls using exposed or withheld candidate previews are reported in Table~\ref{tab:phase4} and Supplementary Tables S33 and S36.
+\textbf{f}, DeepSeek evidence-budget allocation on Target-H. The language-model planner distributes choices across 0, 20, 50, 100, and 200 target-memory samples rather than always using the largest target budget, supporting sample-aware OOD recovery.}
+\label{fig:phase4_main}
+\end{figure}
+
+
+We constructed source-only memories and then augmented them with $k$ target-domain samples. The main planner action space used $k \in \{0,20,50,100,200\}$, while the extended Target-H analysis further included 500, 1000, 2000, and full target-memory settings. Retrieval was evaluated by overall Success@50, target-domain Success@50, top-1 target-domain rate, and amplitude-MSE metrics. The separation between spectral success and target-domain success is critical: a source-cylinder candidate may match a Target-H spectrum while remaining invalid as an H-shaped target-domain design.
+
+
+The two OOD domains show distinct recovery mechanisms (Fig.~\ref{fig:phase4_main}b--d). Target-Self behaves as a calibration-like material/frequency shift: source-only memory fails, but 20 target samples nearly solve the task. Target-H is coverage-limited: source-only memory can be spectrally successful, but target-domain Success@50 remains zero because no H-shaped candidates are present. Adding H-shaped memory progressively restores topology-valid recovery, reaching 0.5125 target-domain Success@50 at 200 shots, 0.8203 at 2000 shots and 0.9473 with full target memory. Detailed curves and threshold checks are reported in Supplementary Note~4.
+
+We next evaluated whether a planner could allocate few-shot evidence more efficiently than fixed rules. All policies selected from the same precomputed retrieval pools over \(k \in \{0,20,50,100,200\}\) and raw-spectrum or domain-aware retrieval. The language model did not run new optimization, modify embeddings or generate geometries. Because the replay exposes candidate-level spectral and domain-validity diagnostics for available actions, the task is an auditable exposed-evidence selection benchmark rather than a blind allocation task; visibility maps and ablations are provided in Supplementary Tables S32--S36.
+
+\begin{table}[t]
+\centering
+\caption{\textbf{Exposed candidate-level evidence determines the few-shot OOD allocation ceiling.}
+Language-model entries report mean $\pm$ standard deviation over three repeated runs. Target S@50 requires at least one successful candidate in the top-50 set to belong to the target domain. Learned decision-list controls use five-fold out-of-fold prediction at the query level. Preview-greedy and the exposed-preview learned control are diagnostic exposed-evidence controls rather than independent blind planners, because they use candidate-level previews exposed by the replay interface. The comparison therefore tests whether planner policies can use structured physical evidence and how much decision headroom remains, not whether a language model uniquely exceeds every deterministic selector.}
+\label{tab:phase4}
+\footnotesize
+\setlength{\tabcolsep}{4.0pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{llccccc}
+\toprule
+Domain & Policy & S@50 & Target S@50 & Best MSE@50 & Target samples & Fallback \\
+\midrule
+Target-H & Source-only & 0.772 & 0.000 & $1.319\times10^{-2}$ & 0.00 & -- \\
+Target-H & Fixed H-200 & 0.826 & 0.610 & $9.994\times10^{-3}$ & 200.00 & -- \\
+Target-H & DeepSeek, 3 runs & 0.893 $\pm$ 0.001 & 0.792 $\pm$ 0.000 & $(9.215\pm0.110)\times10^{-3}$ & 114.21 $\pm$ 0.85 & 0.000 \\
+Target-H & GLM-5.1, 3 runs & 0.891 $\pm$ 0.002 & 0.787 $\pm$ 0.002 & $(9.301\pm0.091)\times10^{-3}$ & 91.23 $\pm$ 1.08 & 0.021 \\
+Target-H & Learned list, exposed previews & 0.888 & 0.792 & $9.913\times10^{-3}$ & 88.96 & 0.000 \\
+Target-H & Learned list, no action previews & 0.826 & 0.610 & $9.994\times10^{-3}$ & 200.00 & 0.000 \\
+Target-H & Preview-greedy control & 0.896 & 0.792 & $9.159\times10^{-3}$ & 88.42 & -- \\
+Target-H & Action-space oracle & 0.896 & 0.792 & $9.159\times10^{-3}$ & 88.42 & -- \\
+\midrule
+Target-Self & Source-only & 0.000 & 0.000 & $2.087\times10^{-1}$ & 0.00 & -- \\
+Target-Self & Fixed self-20 & 1.000 & 1.000 & $2.609\times10^{-9}$ & 20.00 & -- \\
+Target-Self & DeepSeek, 3 runs & 1.000 $\pm$ 0.000 & 1.000 $\pm$ 0.000 & $2.609\times10^{-9}$ & 20.00 $\pm$ 0.00 & 0.000 \\
+Target-Self & GLM-5.1, 3 runs & 1.000 $\pm$ 0.000 & 1.000 $\pm$ 0.000 & $2.609\times10^{-9}$ & 20.00 $\pm$ 0.00 & 0.001 \\
+Target-Self & Learned list, exposed previews & 1.000 & 1.000 & $2.609\times10^{-9}$ & 20.00 & 0.000 \\
+Target-Self & Learned list, no action previews & 1.000 & 1.000 & $7.476\times10^{-11}$ & 200.00 & 0.000 \\
+Target-Self & Preview-greedy control & 1.000 & 1.000 & $2.609\times10^{-9}$ & 20.00 & -- \\
+Target-Self & Action-space oracle & 1.000 & 1.000 & $2.609\times10^{-9}$ & 20.00 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Target-H replay provides the clearest planner-level signal (Fig.~\ref{fig:phase4_main}e and Table~\ref{tab:phase4}). Source-only retrieval reaches 0.772 overall Success@50 but 0.000 target-domain Success@50. A fixed H-200 rule improves target-domain Success@50 to 0.610 at 200 target samples per query. DeepSeek reaches 0.792 target-domain Success@50 with 114.21 samples on average, and GLM-5.1 reaches 0.787 with 91.23 samples. Thus, the language-model policies use exposed evidence more sample-efficiently than the fixed high-budget rule.
+
+The strong non-language controls define the boundary of this claim. A preview-greedy selector and a five-fold out-of-fold learned decision-list control reach the same constrained target-domain ceiling as the action-space oracle, whereas the preview-withheld learned control falls back to the fixed H-200 result. Target-Self further confirms the sample-allocation interpretation: 20 target samples saturate all exposed-evidence policies, while the preview-withheld learned control over-allocates 200 samples. These controls show that the result is not a unique language-reasoning advantage. It is an audit result: the harness reveals useful language-model evidence use, exposed-evidence sufficiency and the performance loss caused by withholding action-level previews.
+
+
+
+
+
+
+\subsection{Representative CST exportability audit tests physical consistency}
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=\linewidth]{figures/phase5_main_composite.pdf}
+\caption{\textbf{Representative CST exportability audit of planner-selected OOD recovery cases.}
+\textbf{a}, Representative CST exportability workflow. A target query spectrum is processed by the few-shot memory and retrieval-evidence module, evaluated by the constrained language-model planner and numeric critic, exported as a fixed unit-cell geometry, simulated in CST, and audited by comparing the target, offline candidate, and CST-simulated spectra.
+\textbf{b}, Case-selection summary for the representative CST spectra. Four domain-valid main cases are selected from the frozen DeepSeek OOD-recovery replay: two Target-H H-shaped topology-shift cases and two Target-Self cylindrical material/frequency-shift cases. A fifth source-cylinder case is retained only as a topology-validity caution.
+\textbf{c,d}, Target-H topology-shift validation cases using H-shaped target-domain candidates over 30--60 THz. The offline candidates closely match the target spectra, whereas the CST spectra show larger deviations after full-wave export. Both CST-vs-target MSE values remain below the amplitude-MSE success threshold of 0.03.
+\textbf{e,f}, Target-Self material/frequency-shift validation cases using cylindrical target-domain candidates over 0.5--1.0 THz. Target, offline candidate, and CST spectra remain nearly overlapping after export.
+\textbf{g}, Error audit for the representative cases, comparing offline-vs-target, CST-vs-target, and CST-vs-offline amplitude MSE. The source-cylinder near-miss is spectrally close but topology-invalid for Target-H recovery.
+\textbf{h}, Offline candidate MSE versus CST-vs-target MSE for the extended 20-case audit. The dashed line indicates $y=x$, and the dotted line indicates the amplitude-MSE success threshold.
+\textbf{i}, CST-vs-target MSE grouped by audit category.
+\textbf{j}, Error increase after full-wave export, measured as $\Delta\log_{10}\mathrm{MSE}=\log_{10}(\mathrm{MSE}_{\mathrm{CST,target}})-\log_{10}(\mathrm{MSE}_{\mathrm{offline,target}})$.
+\textbf{k}, Spectral CST success rate under the amplitude-MSE threshold. Topology-invalid controls can be spectrally successful but are not counted as valid Target-H topology-recovery designs.}
+\label{fig:phase5_cst}
+\end{figure}
+
+The preceding sections evaluated the harness through frozen replay. To bound the physical interpretation of the replay results, representative candidates selected by the frozen language-model-guided recovery workflow were exported into CST full-wave simulations. This is a physical exportability audit rather than a statistical CST validation of all replay success rates: it asks whether selected candidates can be instantiated as concrete unit cells and whether domain-validity logic survives electromagnetic simulation.
+
+Four domain-valid representative cases were selected without post-hoc optimization (Fig.~\ref{fig:phase5_cst}a--g): two Target-H H-shaped candidates and two Target-Self cylindrical candidates. A source-cylinder near-miss was retained only as a topology-validity caution. The full case-selection protocol, planner provenance, exported geometry parameters, CST settings and case-level metrics are provided in Supplementary Note~5.
+
+
+Target-Self cases showed close offline--CST agreement, with CST-vs-target MSE near $2.9\times10^{-6}$. Target-H cases were harder: offline errors were low, but CST-vs-target errors increased to $2.455\times10^{-2}$ and $1.924\times10^{-2}$ after full-wave export, while remaining below the 0.03 threshold. The extended 20-case audit included eight valid Target-H candidates, eight valid Target-Self candidates and four topology-invalid near-miss controls; all 16 domain-valid exports remained spectrally successful, but the topology-invalid controls were excluded from valid Target-H recovery. These results support exportability and domain-validity tracking, not full physical optimality. They also show why replay-table spectral matching cannot replace electromagnetic validation.
+
+
+
+
+\subsection{Qualitative device-function extensions bound the harness scope}
+
+Finally, we tested whether the same bounded-selector interface could be carried from query-level OOD recovery to a compact device-function request without changing the claim. In on-demand meta-filter selection, the target is a Gaussian-notch spectrum and each selector chooses from the same finite source-cylinder candidate pool. The language model does not generate a new filter geometry; retained candidates are exported to CST after bounded evidence selection.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=\linewidth]{figures/phase6_metafilter_composite.pdf}
+\caption{\textbf{Bounded device-function extension through on-demand meta-filter selection.}
+\textbf{a}, Three retained Gaussian-notch target spectra used to test whether the bounded selector interface transfers from OOD retrieval recovery to compact spectral-function requests.
+\textbf{b}, Selected-rank audit for Manual, DeepSeek and GLM-5.1 under the same finite source-cylinder candidate pool. MF01 exposes an interpretable selection tradeoff, whereas MF02 and MF03 lead all selectors to the same rank-0 candidate.
+\textbf{c}, Offline and CST target-MSE values for the retained exported candidates. All retained examples remain below the amplitude-MSE threshold used for this audit.
+\textbf{d,e}, MF01 tradeoff between a low-MSE deep-notch selection and a more centre-aligned GLM-5.1 selection.
+\textbf{f,g}, MF02 and MF03 examples where bounded selectors converge under clearer candidate evidence. This device-function extension tests candidate provenance, spectral tradeoffs and CST exportability; it is not a claim that language models generate new filter geometries or universally outperform deterministic selection.}
+\label{fig:metafilter_main}
+\end{figure}
+
+Figure~\ref{fig:metafilter_main} summarizes three retained requests. MF01 exposes a bounded tradeoff: Manual and DeepSeek choose a lower-MSE, deeper-notch rank-0 candidate, whereas GLM-5.1 chooses a more centre-aligned but shallower rank-5 candidate. MF02 and MF03 are less ambiguous and all selectors converge to rank 0. All retained CST-exported examples remain below the audit threshold. Thus, the extension tests provenance, spectral tradeoffs and exportability, not universal selector superiority.
+
+A finite-aperture one-dimensional metalens extension remains in Supplementary Note~6 as a qualitative phase--amplitude and field-response audit rather than a main focusing-efficiency benchmark. The central evidence remains the frozen replay and few-shot OOD benchmark in Fig.~\ref{fig:phase4_main} and Table~\ref{tab:phase4}.
+
+
+
+\section{Discussion}
+
+This work is primarily an attribution protocol for language-model agents in scientific inverse design. It separates candidate-generation capability, exposed-evidence sufficiency, and planner-level decision headroom, so that workflow gains are not automatically credited to language-model reasoning when decisive information is already contained in retrieval pools, surrogate-refined candidates, deterministic previews, or target-domain memory.
+
+Strong non-language baselines are not auxiliary controls; they are the starting point for any credible attribution claim. Retrieval-seeded PNN optimization with conservative acceptance supplies most numerical inverse-design capability, so gains from stronger seeds, larger pools, or relaxed optimization budgets should not be credited to the language-model planner.
+
+The harness also reveals when language-model policies are useful without implying unique language reasoning. In saturated offline replay, language-model and rule planners converge because binary-success headroom is small. In few-shot OOD recovery, the bottleneck shifts to allocating limited target-domain evidence, and language-model policies reduce sample cost relative to fixed high-budget rules. However, preview-greedy and exposed-preview learned controls reach the same constrained Target-H ceiling when candidate-level previews are visible, whereas preview-withheld learning drops to the fixed H-200 baseline and over-allocates Target-Self evidence. Exposed evidence can therefore make deterministic or learned non-language selection sufficient, so the defensible claim is auditability rather than universal language-model advantage.
+
+The framework also highlights domain validity. In metasurface inverse design, a source-domain cylinder can match an H-shaped target spectrum while violating the required topology. Separating spectral success from target-domain success forces each policy to distinguish admissible recovery from numerically close but domain-mismatched solutions.
+
+The CST audit bounds the physical interpretation without replacing the statistical benchmark. It tests whether the audited policy selects exportable candidates rather than merely attractive replay-table entries. Target-Self cases show close offline--CST agreement, whereas Target-H cases exhibit larger deviations, confirming that replay-table spectral matching is not a substitute for electromagnetic validation. The corrected non-fast metalens example is a qualitative boundary check, not a focusing-efficiency benchmark.
+
+Several limitations remain. Offline replay isolates decision policy from optimizer stochasticity and API variability, but it is not an online partially observed acquisition problem. The PNN surrogate may introduce approximation error under topology shift. The CST audit should be expanded with more Target-H cases, mesh convergence, polarization, angular response, and fabrication-tolerance analyses. Broader open-weight, smaller-model and frontier-model tests are also needed. We do not claim empirical cross-domain generality from a single photonic inverse-design benchmark.
+
+Overall, the main contribution is not that a language model universally improves metasurface inverse design. It is a reproducible route for isolating and stress-testing a bounded language-model agent within a physics-constrained inverse-design workflow. Retrieval-seeded optimization supplies the numerical engine; preview-greedy and oracle analyses prevent overclaiming; CST audits bound the physical interpretation; and few-shot OOD recovery identifies when evidence allocation becomes measurable.
+
+
+\section{Methods}
+
+\subsection{Datasets, representations and retrieval metrics}
+
+Three metasurface domains were processed using a unified configuration: a source cylindrical domain, a Target-H H-shaped topology-shift domain, and a Target-Self cylindrical material/frequency-shift domain. The source domain contains 65,611 samples over 30--60 THz, Target-H contains 24,800 samples over 30--60 THz, and Target-Self contains 3,669 samples over 0.5--1.0 THz. All domains were split into training, validation, and test sets using a 70/15/15 ratio with split seed 48. This produced 45,928/9,842/9,841 samples for source, 17,360/3,720/3,720 for Target-H, and 2,568/550/551 for Target-Self.
+
+Each complex spectrum was represented by real and imaginary channels and downsampled to 31 frequency points for the offline retrieval, surrogate, and planner benchmarks. Geometry parameters were normalised and padded to a six-dimensional vector so that domains with different active parameter dimensions could be handled by a common software interface. The training split only was used to construct the memory bank. Test queries were never inserted into the retrieval database. Original source indices were retained after processing and were used to verify that train and test splits had zero index overlap. We also computed train-nearest-neighbour amplitude-MSE statistics for each held-out test split to document the unusually close Target-Self neighbourhood structure.
+
+Each spectrum was additionally represented by ten physics-inspired descriptors: minimum amplitude, maximum amplitude, mean amplitude, amplitude standard deviation, centre frequency, suppression depth, bandwidth, quality factor, phase span, and mean phase. These descriptors were used for physics-summary retrieval, domain-aware retrieval, numeric-critic diagnostics, visualisation, and planner observations. They were not used as a replacement for full-spectrum evaluation; all success and MSE metrics were computed from the amplitude spectra.
+
+Raw-spectrum retrieval ranked memory-bank samples by processed complex-spectrum similarity. Physics-summary retrieval ranked samples in the ten-dimensional descriptor space. Domain-aware retrieval incorporated domain evidence to distinguish target-domain recovery from spectrally similar but domain-invalid candidates. Success@B was defined as the fraction of test queries for which at least one of the top-B candidates satisfied the amplitude-MSE success threshold.
+
+\subsection{Non-language candidate-generation baselines}
+
+The main non-language candidate-generation baselines included retrieval-only, random/LHS seed optimization, retrieval-seeded PNN optimization, CMA-ES, PSO, direct inverse baselines, and offline heuristic planners. The formal strong retrieval-optimization setting used top-3 retrieval seeds, 30 optimizer iterations, a swarm or population size of 24, a seed radius of 0.08, and amplitude MSE as the optimization objective. The conservative acceptance policy \code{no\_success\_regression} prevented an optimizer output from replacing a successful retrieval candidate when doing so would reduce binary success.
+
+Here PNN denotes the forward surrogate model used for offline spectral evaluation. The PNN forward surrogate maps normalised structural parameters to processed spectra. The training configuration used a hidden dimension of 256, four network blocks, dropout of 0.05, batch size of 512, learning rate of $3\times10^{-4}$, weight decay of $10^{-6}$, a maximum of 80 epochs, and early stopping patience of 12. The trained surrogate was used only as a local forward evaluator during offline optimization.
+
+Direct inverse baselines were evaluated separately from the retrieval-seeded workflow. Their role was to provide a non-retrieval inverse-design comparison rather than to replace the retrieval memory bank. All baseline methods were evaluated on the same test queries and with the same amplitude-MSE success definition.
+
+\subsection{Attribution-aware language--physics framework}
+
+The harness is the engineered environment surrounding the bounded language-model agent. It contains four layers. The evidence layer stores spectra, geometry parameters, domain labels, retrieval neighbours, physics summaries, few-shot target memories, and optimizer outcomes. The candidate-generation layer contains retrieval seeds, the PNN forward surrogate, PSO, CMA-ES, and conservative acceptance. The decision layer contains rule planners, language-model agents, oracle planners, action schemas, observation schemas, and numeric critics. The validation layer contains offline replay, oracle-gap analysis, CST unit-cell exportability audit, and the qualitative corrected non-fast metalens extension.
+
+This design ensures that the language model is evaluated as a bounded evidence-allocation policy rather than as an unconstrained geometry generator. The language-model agent cannot directly invent a metasurface structure, bypass the candidate pool, modify physical thresholds, or launch expensive online optimization during offline replay.
+
+The planner observation included the query domain, query index, retrieval evidence, current best candidate, budget used, budget limit, retrieval top-1 success, retrieval top-1 amplitude MSE, PSO and CMA-ES final success and MSE, action history, and numeric-critic feedback. The allowed planner actions were \code{stop\_with\_retrieval}, \code{run\_pso}, \code{run\_cmaes}, \code{expand\_top\_seeds}, \code{switch\_domain\_prior}, \code{stop\_with\_best\_mse}, and \code{stop\_fail}.
+
+The numeric critic produced structured diagnostic codes, including \code{already\_successful}, \code{amplitude\_mse\_too\_high}, \code{center\_frequency\_shifted}, \code{bandwidth\_mismatch}, \code{suppression\_depth\_mismatch}, \code{optimizer\_no\_gain}, \code{constraints\_not\_met}, and \code{metrics\_unavailable}. These diagnostics were passed to rule planners and language-model planners in the same structured format.
+
+\subsection{Frozen replay and few-shot OOD policy comparison}
+
+Planner policies were evaluated in a frozen offline replay environment. Each action selected from precomputed retrieval, PSO, CMA-ES, expanded-seed, or few-shot recovery result pools. No online CST simulation or new expensive optimization was launched by the language model during replay. This isolates decision quality from candidate-generation randomness, API latency, and optimizer stochasticity.
+
+Rule planners, DeepSeek planners, GLM-5.1 planners, oracle planners, and MSE-aware selectors were evaluated on the same replay pools. Oracle analysis was used to estimate the remaining decision headroom under the available candidate universe. The MSE-aware selector was used as a supplementary analysis to test whether residual planner value appeared mainly as spectral-quality refinement rather than binary success improvement.
+
+Few-shot OOD recovery varied the target-domain memory size across 0, 20, 50, 100, 200, and extended target-memory budgets. Metrics included Success@B, target-domain Success@B, top-1 target-domain rate, top-1 amplitude MSE, best MSE within budget, mean target samples selected, oracle-match rate, fallback or invalid-action rate, and oracle gap.
+
+The main 500-query planner comparison used source-only, fixed shift-aware rules, DeepSeek, GLM-5.1, a preview-greedy non-language-model control, and action-space oracle policies. DeepSeek and GLM-5.1 received structured evidence and returned JSON actions. Each language-model policy was repeated three times in the main robustness analysis. This repeat design was used to assess whether the observed few-shot evidence-allocation behaviour was stable across repeated language-model runs and not a single stochastic outcome.
+
+\subsection{Success criteria and reporting}
+
+The primary success criterion used an amplitude MSE threshold of 0.03 on normalized amplitude spectra, together with domain-specific centre-frequency and bandwidth tolerances. Spectrum-level MSE is a common objective and reporting metric in nanophotonic inverse design; for example, prior metasurface studies have trained forward networks with MSE losses and reported generated-design spectral MSE values on the order of $10^{-2}$, including a 0.037 MSE selection threshold derived from cumulative model error propagation \cite{mall2020cyclical,chen2025tunable}. There is no universal community threshold for this task. We therefore treat 0.03 as a fixed operational engineering tolerance, chosen before planner comparison, not as a model- or domain-tuned parameter. The same amplitude-MSE threshold is used for Source, Target-H, and Target-Self. The frequency-descriptor tolerances are scaled to the domain bandwidth: Source and Target-H use 1.0 THz over a 30 THz span, whereas Target-Self uses 0.02 THz over a 0.5 THz span. Unless otherwise stated, reported success rates were computed over held-out test queries. For language-model planner repeats, results were summarised by mean and run-to-run variation across repeats. For threshold sensitivity, the same selected actions were re-scored at amplitude-MSE thresholds of 0.01, 0.02, 0.03, and 0.05 while retaining the other domain-specific constraints.
+
+\subsection{CST and device-function audits}
+
+Representative unit-cell cases selected from the frozen few-shot DeepSeek OOD-recovery replay were exported to CST using Python automation scripts. Each case generated a fixed-parameter CST project, executed the solver, exported the simulated spectrum, and compared the CST response with the target and offline candidate spectra. No additional geometry optimization was performed after case selection.
+
+Target-Self cylinder cases were simulated over 0.5--1.0 THz with 301 frequency samples. Target-H H-shaped cases were simulated over 30--60 THz with 31 frequency samples because the high-frequency H-shaped topology was computationally more demanding. The CST unit-cell study was used as a representative exportability audit rather than as a large-scale CST benchmark.
+
+The meta-filter extension used Gaussian-notch target spectra and a finite source-cylinder candidate pool. Manual, DeepSeek and GLM-5.1 selected from the same exposed spectra, geometry parameters and critic diagnostics. Retained candidates were exported to CST and compared with the target spectra using the same amplitude-MSE reporting convention.
+
+The finite-aperture metalens experiment extended the unit-cell workflow to a qualitative device-level demonstration. A target focusing phase profile was specified, and unit cells were selected from the candidate library to approximate the required spatial phase distribution under amplitude constraints. Manual and language-model-guided selection strategies were compared using phase error, selected amplitude, candidate-rank distribution, and corrected non-fast CST field maps using a 2-$\mu$m substrate. These simulations are treated as qualitative finite-aperture field diagnostics rather than final mesh-converged focusing-efficiency benchmarks.
+
+
+
+
+
+
+
+
+
+
+
+\section*{Data availability}
+
+The datasets and source data supporting the findings of this study are available via Zenodo at [Zenodo DOI]. The archive includes processed spectra, train/validation/test splits, memory-bank metadata, retrieval and planner replay outputs, CST-export spectra and field summaries, and source data for manuscript figures. Large native CST project files are provided as a separate archival package where licensing and file-size constraints permit.
+
+\section*{Code availability}
+
+The source code used for data processing, retrieval, surrogate training, planner replay, CST-export parsing, analysis and figure generation is available on GitHub at https://github.com/ybw110/bounded-llm-photonic-inverse-design. The version corresponding to this manuscript is archived via Zenodo at [Zenodo DOI]. The released code excludes private API keys and local machine-specific paths.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{Reference}
+
+\end{document}
+

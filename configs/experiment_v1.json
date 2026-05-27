@@ -1,0 +1,163 @@
+{
+  "project_name": "hierarchical-language-physics-metasurface-v1",
+  "legacy_root": "legacy/my_transefer_learning_framework",
+  "processed_root": "data/processed/v1",
+  "response_stride": 10,
+  "default_budget": 50,
+  "split": {
+    "seed": 48,
+    "train_fraction": 0.70,
+    "val_fraction": 0.15,
+    "test_fraction": 0.15
+  },
+  "domains": {
+    "source": {
+      "display_name": "Source cylinder, 30-60 THz",
+      "role": "public_id_source",
+      "topology": "cylinder",
+      "shift_type": "source",
+      "frequency_min_thz": 30.0,
+      "frequency_max_thz": 60.0,
+      "raw_points": 301,
+      "param_dim": 6,
+      "active_param_dim": 4,
+      "param_names": ["epsilon", "gap", "thickness", "radius", "fixed_1", "fixed_2"],
+      "raw_data": {
+        "type": "mat",
+        "path": "cylinder.mat",
+        "param_key": "parameter",
+        "real_key": "real",
+        "imag_key": "imag",
+        "param_columns": [0, 1, 2, 3],
+        "param_ranges": [[12.0, 25.0], [0.1, 1.55], [0.5, 1.55], [0.1, 1.05]],
+        "pad_to_param_dim": 6,
+        "pad_value_norm": 0.5
+      },
+      "train_csv": "PNN_data/source_data_6/train/source_train_set.csv",
+      "val_csv": "PNN_data/source_data_6/val/source_val_set.csv",
+      "test_csv": "PNN_data/source_data_6/test/source_test_set.csv"
+    },
+    "target_h": {
+      "display_name": "Target1 H-shaped, topology shift",
+      "role": "private_ood_target",
+      "topology": "h_shape",
+      "shift_type": "topology",
+      "frequency_min_thz": 30.0,
+      "frequency_max_thz": 60.0,
+      "raw_points": 301,
+      "param_dim": 6,
+      "active_param_dim": 6,
+      "param_names": ["thickness", "refractive_index", "Lx", "Lx1", "Ly", "Ly1"],
+      "raw_data": {
+        "type": "mat",
+        "path": "H.mat",
+        "param_key": "parameter",
+        "real_key": "real",
+        "imag_key": "imag",
+        "param_columns": [1, 2, 3, 4, 5, 6],
+        "param_ranges": [[0.5, 1.0], [3.5, 5.0], [0.5, 0.9], [0.5, 0.9], [0.5, 2.7], [0.5, 2.7]],
+        "pad_to_param_dim": 6,
+        "pad_value_norm": 0.5
+      },
+      "train_csv": "PNN_data/target_H/train/H_train_set.csv",
+      "val_csv": "PNN_data/target_H/val/H_val_set.csv",
+      "test_csv": "PNN_data/target_H/test/H_test_set.csv"
+    },
+    "target_self": {
+      "display_name": "Target2 self/cylinder, material-frequency shift",
+      "role": "private_ood_target",
+      "topology": "cylinder",
+      "shift_type": "material_frequency",
+      "frequency_min_thz": 0.5,
+      "frequency_max_thz": 1.0,
+      "raw_points": 301,
+      "param_dim": 6,
+      "active_param_dim": 4,
+      "param_names": ["epsilon", "gap", "thickness", "radius", "fixed_1", "fixed_2"],
+      "raw_data": {
+        "type": "target_self_csv",
+        "path": "target_self.csv",
+        "param_columns": [0, 1, 2, 3],
+        "response_start_column": 4,
+        "param_ranges": [[3.5, 5.0], [0.1, 1.55], [0.5, 1.55], [0.1, 1.05]],
+        "pad_to_param_dim": 6,
+        "pad_value_norm": 0.5
+      },
+      "train_csv": "PNN_data/target_self_6/train/self_train_set.csv",
+      "val_csv": "PNN_data/target_self_6/val/self_val_set.csv",
+      "test_csv": "PNN_data/target_self_6/test/self_test_set.csv"
+    }
+  },
+  "retrieval": {
+    "summary_weight": 0.70,
+    "domain_weight": 0.20,
+    "constraint_weight": 0.10
+  },
+  "local_optimizer": {
+    "surrogate_type": "pnn_forward",
+    "pnn_model_root": "outputs/phase2_models/pnn_forward",
+    "optimizer": "pso",
+    "objective": "amplitude_mse",
+    "knn_k": 24,
+    "top_seeds": 1,
+    "maxiter": 15,
+    "swarm_size": 12,
+    "seed_radius": 0.08,
+    "inertia": 0.72,
+    "cognitive": 1.45,
+    "social": 1.45,
+    "method": "Powell",
+    "same_domain_only": true,
+    "accept_only_if_improved": true,
+    "acceptance_policy": "no_success_regression"
+  },
+  "pnn_training": {
+    "output_root": "outputs/phase2_models/pnn_forward",
+    "hidden_dim": 256,
+    "num_blocks": 4,
+    "dropout": 0.05,
+    "batch_size": 512,
+    "epochs": 80,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.000001,
+    "patience": 12,
+    "num_workers": 0,
+    "seed": 48
+  },
+  "inn_training": {
+    "output_root": "outputs/phase2_models/inn_inverse",
+    "hidden_dim": 256,
+    "num_blocks": 4,
+    "dropout": 0.05,
+    "batch_size": 512,
+    "epochs": 80,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.000001,
+    "patience": 12,
+    "num_workers": 0,
+    "seed": 48
+  },
+  "success_thresholds": {
+    "amplitude_mse": 0.03,
+    "center_frequency_error_thz": 1.0,
+    "bandwidth_error_thz": 1.0,
+    "constraint_satisfaction": 1.0
+  },
+  "success_thresholds_by_domain": {
+    "source": {
+      "amplitude_mse": 0.03,
+      "center_frequency_error_thz": 1.0,
+      "bandwidth_error_thz": 1.0
+    },
+    "target_h": {
+      "amplitude_mse": 0.03,
+      "center_frequency_error_thz": 1.0,
+      "bandwidth_error_thz": 1.0
+    },
+    "target_self": {
+      "amplitude_mse": 0.03,
+      "center_frequency_error_thz": 0.02,
+      "bandwidth_error_thz": 0.02
+    }
+  }
+}
