@@ -1,10 +1,26 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+build/
+dist/
 .venv/
-outputs/*
-!outputs/.gitkeep
-data/processed/*
-*.npz
-*.npy
+venv/
+
+# IDEs & OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Data, checkpoints, raw logs & API secrets
+data/
+outputs/
+legacy/
+.env
+*.pt
 *.pth
-*.pth.tar
+*.mat
+*.csv
+*.npy
+*.npz
